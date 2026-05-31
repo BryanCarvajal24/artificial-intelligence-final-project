@@ -187,7 +187,7 @@ admin
 Name:
 
 ```text
-qversity-postgres
+ai-project-postgres
 ```
 
 
@@ -208,17 +208,17 @@ Port:
 Database:
 
 ```text
-qversity
+ai_project
 ```
 
 User:
 
 ```text
-qversity-admin
+ai_admin
 ```
 
 Password:
 
 ```text
-qversity-admin
+ai_admin
 ```

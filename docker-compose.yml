@@ -4,15 +4,15 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-qversity-admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-qversity-admin}
-      POSTGRES_DB: ${POSTGRES_DB:-qversity}
+      POSTGRES_USER: ${POSTGRES_USER:-ai_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ai_admin}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_project}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U qversity-admin -d qversity"]
+      test: ["CMD-SHELL", "pg_isready -U ai_admin -d ai_project"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,7 +24,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-qversity-admin}:${POSTGRES_PASSWORD:-qversity-admin}@postgres/${POSTGRES_DB:-qversity}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER:-ai_admin}:${POSTGRES_PASSWORD:-ai_admin}@postgres/${POSTGRES_DB:-ai_project}
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
@@ -33,15 +33,11 @@ services:
         boto3
         pyspark==3.5.0
         psycopg2-binary
-        dbt-core
-        dbt-postgres
     volumes:
       - ./dags:/opt/airflow/dags
       - ./src:/opt/airflow/src
-      - ./spark:/opt/airflow/spark
       - ./logs:/opt/airflow/logs
       - ./data:/opt/airflow/data
-      - ./dbt:/opt/airflow/dbt
     ports:
       - "8080:8080"
     command: >
@@ -50,25 +46,6 @@ services:
       airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
       airflow scheduler & airflow webserver
       "
-
-  dbt:
-    image: python:3.11
-    volumes:
-      - ./dbt:/dbt
-      - ./data:/data
-    working_dir: /dbt
-    command: >
-      bash -c "
-      pip install dbt-core dbt-postgres &&
-      sleep infinity
-      "
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DBT_PROFILES_DIR: /dbt
-
-
 
   pgadmin:
     image: dpage/pgadmin4:8.14
@@ -82,10 +59,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
-
-
-
 
 volumes:
   postgres_data:
