@@ -64,7 +64,7 @@ Ambient Weather API                 PurpleAir API
 │ HISTORICAL DATASET                      │
 │ silver.stg_historical_compartir_station │
 │                                         │
-│ - Air pollutant variables                 │
+│ - Air pollutant variables               │
 │ - Meteorological variables              │
 │ - Training features                     │
 └─────────────────────────────────────────┘
