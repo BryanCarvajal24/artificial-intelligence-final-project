@@ -19,6 +19,17 @@ An XGBoost regression model is trained using historical observations from the Co
 
 ---
 
+Teammates:
+
+- Samuel Uribe
+- Emilio Marquez
+- Juan Pablo Lopez
+
+---
+
+
+
+
 # Architecture
 
 
