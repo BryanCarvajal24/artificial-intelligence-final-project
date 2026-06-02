@@ -13,7 +13,7 @@ An XGBoost regression model is trained using historical observations from the Co
 # Project Information
 
 - Full Name: Bryan Fernando Burbano Carvajal
-- Email: bryan.burbano@uao.edu.co
+- Email: bryanburbanocarvajal24@gmail.com
 - City: Cali
 - Role: Data Engineer and Artificial Intelligence Engineer
 
