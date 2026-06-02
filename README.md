@@ -205,3 +205,94 @@ Password:
 ```text
 ai_admin
 ```
+
+
+
+# Power BI Connection
+
+## GET DATA
+
+Select:
+
+```text
+PostgreSQL Database
+```
+
+---
+
+## DATABASE
+
+### Server
+
+```text
+localhost:5432
+```
+
+### Database
+
+```text
+ai_project
+```
+
+### Data Connectivity Mode
+
+```text
+Import
+```
+
+Click **OK**.
+
+---
+
+## AUTHENTICATION
+
+### Username
+
+```text
+ai_admin
+```
+
+### Password
+
+```text
+ai_admin
+```
+
+### Apply Settings To
+
+```text
+localhost:5432
+```
+
+Click **Connect**.
+
+---
+
+## ENCRYPTION COMPATIBILITY
+
+When connecting, Power BI may display the following message:
+
+```text
+Compatibility with encryption
+```
+
+Message:
+
+```text
+Unable to connect to the data source through an encrypted connection.
+To access this data source using an unencrypted connection, click Accept.
+```
+
+Action:
+
+```text
+Click Accept
+```
+
+Power BI will then establish the connection successfully.
+
+
+```text
+Transform Data
+```
+
