@@ -1,8 +1,12 @@
-# Qversity Fintech ELT Pipeline
+# Application of Artificial Intelligence Algorithms for PM2.5 Prediction in Eastern Santiago de Cali
 
-End-to-end ELT pipeline for a fictional LATAM fintech company using Airflow, PostgreSQL, PySpark, dbt, and PowerBI, fully containerized with Docker Compose.
+End-to-end Data Engineering and Artificial Intelligence pipeline for PM2.5 prediction in the eastern area of Santiago de Cali, Colombia, using Apache Airflow, PostgreSQL, Docker, XGBoost, and Power BI, fully containerized with Docker Compose.
 
-The project ingests raw JSON data from AWS S3, stores it in a Bronze layer, transforms and normalizes it in Silver, and exposes analytics-ready Gold models for business intelligence and dashboards.
+The project combines historical air quality records collected between 2014 and 2019 from the Compartir Air Quality Monitoring Station, located in eastern Santiago de Cali, with real-time environmental data acquired from two monitoring systems installed at Fundautónoma: a PurpleAir sensor for PM10 measurements and an Ambient Weather station for meteorological observations.
+
+The pipeline ingests raw environmental and air quality data into a Bronze layer, performs cleaning, transformation, feature engineering, and PM10 integration in a Silver layer, and exposes PM2.5 predictions through analytics-ready Gold models for monitoring, reporting, and visualization.
+
+An XGBoost regression model is trained using historical observations from the Compartir monitoring station and subsequently used to estimate PM2.5 concentrations from current meteorological conditions and PM10 measurements collected in eastern Santiago de Cali.
 
 ---
 
@@ -11,7 +15,7 @@ The project ingests raw JSON data from AWS S3, stores it in a Bronze layer, tran
 - Full Name: Bryan Fernando Burbano Carvajal
 - Email: bryan.burbano@uao.edu.co
 - City: Cali
-- Cohort: Qversity Data 2026
+- Role: Data Engineer and Artificial Intelligence Engineer
 
 ---
 
@@ -19,102 +23,81 @@ The project ingests raw JSON data from AWS S3, stores it in a Bronze layer, tran
 
 
 ```text
-S3 (fintech_banking_dataset.json)
-                │
-                ▼
-        Apache Airflow (DAG)
-                │
-                ▼
 
-┌─────────────────────────────────┐
-│ BRONZE LAYER                    │
-│ PostgreSQL - schema bronze      │
-│ Raw JSON stored as jsonb        │
-│ + ingestion metadata            │
-└─────────────────────────────────┘
-                │
-                ▼
 
-┌─────────────────────────────────┐
-│ PySpark Silver Staging          │
-│ - Flatten nested arrays         │
-│ - Deduplicate records           │
-│ - Create staging tables         │
-│ - Write into schema silver      │
-└─────────────────────────────────┘
-                │
-                ▼
+                 Apache Airflow DAG
+                            │
+                            ▼
 
-┌─────────────────────────────────┐
-│ dbt Silver Models               │
-│ - Data cleaning                 │
-│ - Standardization               │
-│ - Normalization                 │
-│ - Flatten nested objects        │
-│ - Dimensions & facts            │
-│ - Data quality tests            │
-└─────────────────────────────────┘
-                │
-                ▼
+Ambient Weather API                 PurpleAir API
+         │                                 │
+         ▼                                 ▼
 
-┌─────────────────────────────────┐
-│ GOLD LAYER                      │
-│ PostgreSQL - schema gold        │
-│ Analytics-ready models          │
-│ Business metrics & KPIs         │
-└─────────────────────────────────┘
-                │
-                ▼
+┌─────────────────────────────────────────────────────┐
+│ BRONZE LAYER                                        │
+│ PostgreSQL - Schema: bronze                         │
+│                                                     │
+│ bronze.ambient_weather_api_data                     │
+│ bronze.PM10_station_api_data                        │
+│                                                     │
+│ • Raw meteorological data                           │
+│ • Raw PM10 measurements                             │
+│ • API ingestion layer                               │
+└─────────────────────────────────────────────────────┘
+                             │
+                             ▼
 
-          PowerBI Dashboard
+┌─────────────────────────────────────────┐
+│ SILVER LAYER                            │
+│ silver.stg_environmental_api_data       │
+│                                         │
+│ - Data cleaning                         │
+│ - Datetime processing                   │
+│ - Feature engineering                   │
+│ - Cyclical variables                    │
+│ - PM10 merge                            │
+└─────────────────────────────────────────┘
+                             │
+                             ▼
+
+┌─────────────────────────────────────────┐
+│ HISTORICAL DATASET                      │
+│ silver.stg_historical_compartir_station │
+│                                         │
+│ - Air pollutant variables                 │
+│ - Meteorological variables              │
+│ - Training features                     │
+└─────────────────────────────────────────┘
+                             │
+                             ▼
+
+┌─────────────────────────────────────────┐
+│ MACHINE LEARNING                        │
+│ XGBoost Regressor                       │
+│                                         │
+│ - Model training                        │
+│ - Feature persistence                   │
+│ - Model persistence (.pkl)              │
+└─────────────────────────────────────────┘
+                             │
+                             ▼
+
+┌─────────────────────────────────────────┐
+│ GOLD LAYER                              │
+│ gold.pm25_predictions                   │
+│                                         │
+│ - Environmental variables               │
+│ - Predicted PM2.5 values                │
+│ - Analytics-ready dataset               │
+└─────────────────────────────────────────┘
+                             │
+                             ▼
+
+                     Power BI Dashboard
+
+
 ```
 
----
-
-# Bronze Layer
-
-The Bronze layer stores the raw dataset with minimal transformation.
-
-Current implementation:
-
-- Airflow DAG downloads the dataset from AWS S3
-- Raw JSON records are stored in PostgreSQL using `jsonb`
-- Ingestion metadata is included (`id`, `load_timestamp`)
-- Bronze schema and table are automatically created
-
-Main table:
-
-```sql
-bronze.raw_fintech_data
-```
-
-
-
-# Silver Layer
-
-The Silver layer cleans, flattens, normalizes, and structures the Bronze data into relational models.
-
-Current implementation:
-
-- PySpark flattens nested arrays and nested objects
-- Deduplication logic is applied
-- dbt standardizes and cleans the data
-- Fact and dimension tables are created
-- Data quality tests are implemented with dbt
-
-
-
-
-# Gold Layer
-
-The Gold layer contains analytics-ready models designed for KPIs, business metrics, and PowerBI dashboards.
-
-Current implementation:
-
-Aggregated business metrics are created
-Models are optimized for analytics and reporting
-Gold tables support the required business questions
-PowerBI connects directly to the gold schema
 
 
 

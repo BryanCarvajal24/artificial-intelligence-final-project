@@ -93,7 +93,7 @@ def predict_pm25():
     )
 
     environmental_df[
-        "PM2.5 Predicho (ug/m3)"
+        "PM2.5 Estimado (ug/m3)"
     ] = predictions
 
     print(
